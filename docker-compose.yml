@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports: ["8501:8501"]
+    environment:
+      DATABASE_URL: postgresql://care:care@db:5432/care
+      REDIS_URL: redis://cache:6379/0
+    depends_on: [db, cache]
+  db:
+    image: postgres:16-alpine
+    environment: {POSTGRES_USER: care, POSTGRES_PASSWORD: care, POSTGRES_DB: care}
+    volumes: [pgdata:/var/lib/postgresql/data]
+  cache:
+    image: redis:7-alpine
+volumes: {pgdata: {}}

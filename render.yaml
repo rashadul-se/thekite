@@ -1,0 +1,23 @@
+# Render Blueprint: New > Blueprint > connect repo. Render runs the Dockerfile directly.
+services:
+  - type: web
+    name: eldercare-app
+    runtime: docker
+    plan: standard
+    numInstances: 2
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: {name: eldercare-db, property: connectionString}
+      - key: REDIS_URL
+        fromService: {type: keyvalue, name: eldercare-redis, property: connectionString}
+      - key: DB_POOL_MAX
+        value: "10"
+  - type: keyvalue
+    name: eldercare-redis
+    plan: starter
+    ipAllowList: []
+    maxmemoryPolicy: allkeys-lru
+databases:
+  - name: eldercare-db
+    plan: basic-1gb
